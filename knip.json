@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/main.ts"],
+  "project": ["src/**/*.ts", "src/**/*.svelte"],
+  "ignore": [".pi/**"],
+  "ignoreDependencies": ["lucide-svelte", "svelte"],
+  "ignoreBinaries": [],
+  "rules": {
+    "binaries": "warn",
+    "dependencies": "error",
+    "devDependencies": "error",
+    "unlisted": "error",
+    "exports": "error",
+    "files": "error",
+    "nsExports": "error",
+    "nsTypes": "error",
+    "types": "error"
+  }
+}

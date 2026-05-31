@@ -1,0 +1,12 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "ignoreFiles": [".pi/**"],
+  "rules": {
+    "selector-class-pattern": null,
+    "no-descending-specificity": null,
+    "declaration-no-important": true,
+    "color-hex-length": "long",
+    "alpha-value-notation": "percentage",
+    "custom-property-pattern": null
+  }
+}

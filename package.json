@@ -1,0 +1,45 @@
+{
+  "name": "vernac",
+  "version": "1.0.0",
+  "description": "Privacy-focused AI translation app. Translate text using OpenAI, Anthropic Claude, or local Ollama models — no sign-in required, no data sent to third-party servers.",
+  "private": true,
+  "license": "MIT",
+  "author": "RezaLabs",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+    "dev": "vite",
+    "knip": "knip --production --strict",
+    "lint:css": "stylelint 'src/**/*.css'",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lucide-svelte": "^1.0.1"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/node": "^24.12.2",
+    "knip": "^6.14.2",
+    "stylelint": "^17.12.0",
+    "stylelint-config-standard": "^40.0.0",
+    "svelte": "^5.55.4",
+    "svelte-check": "^4.4.6",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.10"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rezalabs/vernac"
+  },
+  "bugs": {
+    "url": "https://github.com/rezalabs/vernac/issues"
+  },
+  "homepage": "https://github.com/rezalabs/vernac#readme",
+  "sideEffects": false
+}
