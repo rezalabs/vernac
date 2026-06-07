@@ -75,9 +75,9 @@
   function getModel(): string {
     const useCustomModel = localStorage.getItem('useCustomModel') === 'true';
     if (useCustomModel) {
-      return localStorage.getItem('customModel') || 'gpt-4o-mini';
+      return localStorage.getItem('customModel') || 'gpt-5.5';
     }
-    return localStorage.getItem('model') || 'gpt-4o-mini';
+    return localStorage.getItem('model') || 'gpt-5.5';
   }
 
   function getReasoningEffort(): string {
@@ -189,7 +189,7 @@
         };
 
         if (reasoningEffort !== 'none') {
-          const budgetTokens = reasoningEffort === 'high' ? 4096 : reasoningEffort === 'low' ? 256 : 1024;
+          const budgetTokens = reasoningEffort === 'xhigh' ? 8192 : reasoningEffort === 'high' ? 4096 : reasoningEffort === 'low' ? 256 : 1024;
           body.thinking = { type: 'enabled', budget_tokens: budgetTokens };
         }
 
@@ -218,7 +218,7 @@
         };
 
         if (reasoningEffort !== 'none') {
-          const ctxSize = reasoningEffort === 'high' ? 32768 : reasoningEffort === 'low' ? 4096 : 16384;
+          const ctxSize = reasoningEffort === 'xhigh' ? 65536 : reasoningEffort === 'high' ? 32768 : reasoningEffort === 'low' ? 4096 : 16384;
           body.options = { num_ctx: ctxSize };
         }
 

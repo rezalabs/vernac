@@ -11,7 +11,7 @@
   let apiKey = "";
   let hasApiKey = false;
   let provider = "OpenAI Compatible";
-  let model = "gpt-4o-mini";
+  let model = "gpt-5.5";
   let customModel = "";
   let useCustomModel = false;
   let apiEndpoint = "";
@@ -25,8 +25,8 @@
   let pendingProvider: string | null = null;
 
   const providerModels: Record<string, string[]> = {
-    'OpenAI Compatible': ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo', 'o1-mini', 'o1'],
-    'Anthropic': ['claude-3-5-haiku-20241022', 'claude-3-5-sonnet-20241022', 'claude-3-opus-20240229'],
+    'OpenAI Compatible': ['gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini'],
+    'Anthropic': ['claude-opus-4-8', 'claude-sonnet-4-6', 'claude-haiku-4-5'],
     'Local (Ollama)': ['llama3.2', 'llama3.1', 'mistral', 'qwen2.5', 'deepseek-r1']
   };
 
@@ -37,7 +37,7 @@
     hasApiKey = !!savedApiKey;
     apiKey = savedApiKey ? savedApiKey : "";
     provider = localStorage.getItem('provider') || 'OpenAI Compatible';
-    model = localStorage.getItem('model') || 'gpt-4o-mini';
+    model = localStorage.getItem('model') || 'gpt-5.5';
     customModel = localStorage.getItem('customModel') || '';
     useCustomModel = localStorage.getItem('useCustomModel') === 'true';
     apiEndpoint = localStorage.getItem('apiEndpoint') || '';
@@ -82,7 +82,7 @@
     apiKey = "";
     hasApiKey = false;
     provider = 'OpenAI Compatible';
-    model = 'gpt-4o-mini';
+    model = 'gpt-5.5';
     customModel = '';
     useCustomModel = false;
     apiEndpoint = '';
@@ -224,6 +224,7 @@
               <option value="low">Low</option>
               <option value="medium">Medium</option>
               <option value="high">High — most thorough</option>
+              <option value="xhigh">Extra High — maximum depth</option>
             </select>
             <p class="helper">Controls reasoning depth for models that support extended thinking.</p>
           </div>

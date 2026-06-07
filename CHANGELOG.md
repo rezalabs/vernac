@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Changed
+- Update OpenAI model list to current lineup: gpt-5.5, gpt-5.4, gpt-5.4-mini
+- Update Anthropic model list to current lineup: claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5
+- Change default model from deprecated gpt-4o-mini to gpt-5.5
+- Add Extra High (xhigh) reasoning effort level matching current API
+
 ### Fixed
 - Sync auto-detect setting from Settings drawer without requiring page reload
 - Allow clearing saved API key via the Settings save flow
