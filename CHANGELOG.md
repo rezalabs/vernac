@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Fixed
+- Sync auto-detect setting from Settings drawer without requiring page reload
+- Allow clearing saved API key via the Settings save flow
+- Prevent duplicate source and target languages when swapping with auto-detect enabled
+- Guard clipboard write operations against unhandled rejections in insecure contexts
+
 ## [1.0.0] - 2026-04-26
 
 ### Added

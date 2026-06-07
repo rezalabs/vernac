@@ -57,6 +57,11 @@
   let copied = false;
   let copiedTimer: ReturnType<typeof setTimeout> | null = null;
   let autoDetect = getAutoDetect();
+  export let settingsClosedAt: number = 0;
+
+  $: if (settingsClosedAt > 0) {
+    autoDetect = getAutoDetect();
+  }
 
   // API configuration from localStorage
   function getApiKey(): string | null {
@@ -261,8 +266,8 @@
         translatedText = data.choices?.[0]?.message?.content || '';
       }
 
-      if (localStorage.getItem('autoCopy') === 'true' && translatedText) {
-        navigator.clipboard.writeText(translatedText);
+      if (localStorage.getItem('autoCopy') === 'true' && translatedText && navigator.clipboard) {
+        navigator.clipboard.writeText(translatedText).catch(() => {});
       }
     } catch (err) {
       translationError = err instanceof Error ? err.message : 'Translation failed. Check your API configuration.';
@@ -273,9 +278,12 @@
   }
 
   function handleSwap() {
-    const temp = sourceLang;
+    const langTemp = sourceLang;
     sourceLang = targetLang;
-    targetLang = temp === "Detect language" ? "English (US)" : temp;
+    targetLang = langTemp === "Detect language" ? "English (US)" : langTemp;
+    if (sourceLang === targetLang) {
+      targetLang = "Spanish";
+    }
     const textTemp = sourceText;
     sourceText = translatedText;
     translatedText = textTemp;
@@ -287,8 +295,13 @@
     translationError = null;
   }
 
-  function handleCopy() {
-    navigator.clipboard.writeText(translatedText);
+  async function handleCopy() {
+    if (!navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(translatedText);
+    } catch {
+      return;
+    }
     copied = true;
     if (copiedTimer) clearTimeout(copiedTimer);
     copiedTimer = setTimeout(() => {

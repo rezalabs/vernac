@@ -48,9 +48,7 @@
   }
 
   function saveSettings() {
-    if (apiKey.trim()) {
-      localStorage.setItem('apiKey', apiKey.trim());
-    }
+    localStorage.setItem('apiKey', apiKey.trim());
     localStorage.setItem('provider', provider);
     localStorage.setItem('model', model);
     localStorage.setItem('customModel', customModel.trim());

@@ -42,7 +42,7 @@
 
   <main>
     <QuickSetup settingsClosedAt={settingsClosedAt} />
-    <TranslationWorkspace />
+    <TranslationWorkspace settingsClosedAt={settingsClosedAt} />
   </main>
 
   <SettingsDrawer isOpen={isSettingsOpen} onClose={handleSettingsClose} />
