@@ -57,9 +57,25 @@
     overflow: hidden;
   }
 
+  main :global(.workspace) {
+    animation: leaf-in 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  @media (max-width: 1024px) {
+    main {
+      overflow: visible;
+    }
+  }
+
   @media (max-width: 640px) {
     #app {
       padding: 0 var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    main :global(.workspace) {
+      animation: none;
     }
   }
 </style>

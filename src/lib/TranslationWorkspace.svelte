@@ -2,6 +2,7 @@
   import { Trash2, Sparkles, Copy, Check } from 'lucide-svelte';
   import LanguageSelector from './LanguageSelector.svelte';
   import TextAreaPanel from './TextAreaPanel.svelte';
+  import { roughFrame } from './rough';
 
   function handleKeydown(event: KeyboardEvent) {
     const isMod = event.ctrlKey || event.metaKey;
@@ -332,6 +333,8 @@
       id="source-editor"
     />
 
+    <div class="stitch" aria-hidden="true"></div>
+
     <TextAreaPanel
       label={getDisplayLabel(targetLang)}
       bind:value={translatedText}
@@ -347,18 +350,27 @@
     </button>
 
     <div class="action-center">
-      <button class="translate-button" on:click={handleTranslate} disabled={isTranslating} title="Translate (Ctrl+Enter)">
-        {#if isTranslating}
-          <svg class="spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <circle cx="12" cy="12" r="10" opacity="0.25" />
-            <path d="M12 2a10 10 0 0 1 10 10" />
-          </svg>
-          <span>Translating…</span>
-        {:else}
-          <Sparkles size={18} />
-          <span>Translate</span>
-        {/if}
+      <button
+        class="translate-button"
+        on:click={handleTranslate}
+        disabled={isTranslating}
+        title="Translate (Ctrl+Enter)"
+        use:roughFrame={{ stroke: '--color-accent-deep', strokeWidth: 1.6, roughness: 1.25, radius: 10 }}
+      >
+        <span class="bt-inner">
+          {#if isTranslating}
+            <svg class="spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10" opacity="0.25" />
+              <path d="M12 2a10 10 0 0 1 10 10" />
+            </svg>
+            <span>Translating…</span>
+          {:else}
+            <Sparkles size={18} />
+            <span>Translate</span>
+          {/if}
+        </span>
       </button>
+      <span class="shortcut-note" aria-hidden="true">press Ctrl + Enter</span>
     </div>
 
     <button class="copy-button" on:click={handleCopy} disabled={!translatedText} title="Copy (Ctrl+Shift+C)" class:copied>
@@ -378,7 +390,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-5);
     min-height: 0;
     background: var(--color-surface);
   }
@@ -394,6 +406,7 @@
     color: var(--color-danger);
     font-size: 13px;
     line-height: 1.5;
+    transform: rotate(-0.4deg);
   }
 
   .error-icon {
@@ -405,7 +418,8 @@
     border-radius: 50%;
     background: var(--color-danger);
     color: var(--color-accent-text);
-    font-size: 12px;
+    font-family: var(--font-display);
+    font-size: 13px;
     font-weight: 700;
     flex-shrink: 0;
   }
@@ -426,46 +440,77 @@
   .panels-container {
     flex: 1;
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-5);
     min-height: 0;
+  }
+
+  /* The binding stitch between the two facing pages */
+  .stitch {
+    flex-shrink: 0;
+    width: 0;
+    border-left: 2px dashed var(--color-line-soft);
+    align-self: stretch;
+    margin: var(--space-5) 0;
   }
 
   .action-row {
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding-top: var(--space-1);
   }
 
   .action-center {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
     flex: 1;
   }
 
   .translate-button {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
     padding: var(--space-3) var(--space-10);
     background: var(--color-accent);
     color: var(--color-accent-text);
     border-radius: var(--radius-md);
+    font-family: var(--font-display);
     font-weight: 600;
     font-size: 15px;
-    transition: all 0.2s ease;
+  }
+
+  .bt-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .translate-button:hover:not(:disabled) {
     background: var(--color-accent-hover);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
+  .translate-button:active:not(:disabled) {
+    transform: translateY(1px);
   }
 
   .translate-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  .shortcut-note {
+    font-family: var(--font-hand);
+    font-size: 16px;
+    line-height: 1;
+    color: var(--color-text-tertiary);
+    transform: rotate(-2deg);
   }
 
   @keyframes spin {
@@ -488,7 +533,6 @@
     border-radius: var(--radius-md);
     font-weight: 500;
     font-size: 14px;
-    transition: all 0.2s ease;
   }
 
   .secondary-button:hover:not(:disabled),
@@ -506,14 +550,27 @@
 
   .copy-button.copied {
     background: var(--color-accent);
-    border-color: var(--color-accent);
+    border-color: var(--color-accent-deep);
     color: var(--color-accent-text);
     pointer-events: none;
   }
 
   @media (max-width: 1024px) {
+    .workspace {
+      flex: none;
+      overflow: visible;
+    }
+
     .panels-container {
       flex-direction: column;
+    }
+
+    .stitch {
+      width: auto;
+      height: 0;
+      border-left: none;
+      border-top: 2px dashed var(--color-line-soft);
+      margin: 0 var(--space-5);
     }
   }
 
@@ -522,16 +579,25 @@
       flex-direction: column;
       gap: var(--space-3);
     }
+
     .action-center {
       width: 100%;
     }
+
     .translate-button {
       width: 100%;
     }
+
     .secondary-button,
     .copy-button {
       width: 100%;
       justify-content: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner {
+      animation-duration: 1.6s;
     }
   }
 </style>

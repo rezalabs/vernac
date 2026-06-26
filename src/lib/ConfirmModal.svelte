@@ -121,8 +121,9 @@
 
   .modal-header h2 {
     flex: 1;
-    font-size: 16px;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
     margin-top: var(--space-1);
     padding-right: var(--space-6);
   }
@@ -165,9 +166,10 @@
   .confirm-button {
     padding: var(--space-3) var(--space-5);
     border-radius: var(--radius-md);
+    font-family: var(--font-display);
     font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
+    font-weight: 600;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   }
 
   .cancel-button {

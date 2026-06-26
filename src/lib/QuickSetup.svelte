@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ChevronDown, ChevronUp, Lock, Eye, EyeOff, Check, KeyRound } from 'lucide-svelte';
   import { onMount } from 'svelte';
+  import { roughFrame } from './rough';
 
   export let settingsClosedAt = 0;
 
@@ -37,19 +38,20 @@
 {#if !isSaved}
 <div class="quick-setup">
   <button
-    class="setup-banner card"
+    class="setup-banner card is-inked"
     on:click={toggleExpand}
     aria-expanded={isExpanded}
     aria-controls="setup-panel"
+    use:roughFrame={{ stroke: '--color-persimmon', strokeWidth: 1.6, roughness: 1.3, radius: 14 }}
   >
     <div class="info">
       <div class="icon-ring">
         <KeyRound size={18} />
       </div>
       <div class="text">
-        <h3>API key required</h3>
+        <h3>Add a key to begin</h3>
         <p class="description">
-          Enter your API key to start translating. Works with OpenAI, Anthropic, or local Ollama.
+          Paste an API key to start translating. Works with OpenAI, Anthropic, or local Ollama.
         </p>
       </div>
     </div>
@@ -65,13 +67,13 @@
   {#if isExpanded}
     <div id="setup-panel" class="setup-panel card">
       <div class="field">
-        <label for="quick-api-key">API Key</label>
+        <label for="quick-api-key">API key</label>
         <div class="input-wrapper">
           <input
             id="quick-api-key"
             type={showApiKey ? "text" : "password"}
             bind:value={apiKey}
-            placeholder="Enter your API key"
+            placeholder="Paste your API key"
           />
           <button class="toggle-password" on:click={() => showApiKey = !showApiKey} aria-label={showApiKey ? 'Hide API key' : 'Show API key'}>
             {#if showApiKey}
@@ -91,7 +93,7 @@
       </div>
       <div class="security-notice">
         <Lock size={13} />
-        <span>API key never leaves your browser — stored in localStorage only.</span>
+        <span>Your key never leaves your browser. It lives only in localStorage.</span>
       </div>
     </div>
   {/if}
@@ -107,40 +109,40 @@
   }
 
   .setup-banner {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--space-4) var(--space-5);
-    background: var(--color-accent-bg);
-    border-color: var(--color-accent);
+    background: var(--color-persimmon-soft);
     cursor: pointer;
-    transition: all 0.2s ease;
     width: 100%;
     text-align: left;
   }
 
   .setup-banner:hover {
-    border-color: var(--color-accent-hover);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
   }
 
   .info {
     display: flex;
     align-items: center;
     gap: var(--space-4);
+    position: relative;
+    z-index: 1;
   }
 
   .icon-ring {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--color-surface);
-    border: 1px solid var(--color-accent);
+    border: 1.5px solid var(--color-persimmon);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--color-accent);
+    color: var(--color-persimmon);
   }
 
   .text {
@@ -150,8 +152,9 @@
   }
 
   h3 {
-    font-size: 15px;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
     color: var(--color-text-primary);
     line-height: 1.3;
   }
@@ -165,8 +168,10 @@
   .chevron {
     display: flex;
     align-items: center;
-    color: var(--color-text-tertiary);
+    color: var(--color-persimmon);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .setup-panel {
@@ -180,6 +185,7 @@
 
   .field label {
     display: block;
+    font-family: var(--font-display);
     font-size: 13px;
     font-weight: 600;
     color: var(--color-text-secondary);
@@ -207,7 +213,7 @@
   input:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px var(--color-accent-bg);
+    box-shadow: 0 0 0 2px var(--color-accent-bg);
   }
 
   input::placeholder {
@@ -248,14 +254,14 @@
     background: var(--color-accent);
     color: var(--color-accent-text);
     border-radius: var(--radius-md);
+    font-family: var(--font-display);
     font-size: 14px;
     font-weight: 600;
-    transition: all 0.2s ease;
   }
 
   .save-button:hover:not(:disabled) {
     background: var(--color-accent-hover);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
   }
 
   .save-button:disabled {
@@ -273,7 +279,7 @@
     text-align: center;
     margin-top: var(--space-4);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px dashed var(--color-line-soft);
     line-height: 1.5;
   }
 </style>

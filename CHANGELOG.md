@@ -7,13 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- Add support and donation links (Buy Me a Coffee, Ko-fi) to the Settings drawer
+
 ### Changed
+- Redesign the interface around a hand-drawn "translator's notebook" theme: ink-on-paper palette, Bricolage Grotesque and Caveat typography, and a paper dot-grid texture
+- Render panel, control, and banner borders as hand-drawn frames via RoughJS, with the wordmark underline and notebook pages sketching themselves in on load (anime.js), all respecting `prefers-reduced-motion`
+- Replace the teal accent with a forest-green primary and a persimmon signature accent
 - Update OpenAI model list to current lineup: gpt-5.5, gpt-5.4, gpt-5.4-mini
 - Update Anthropic model list to current lineup: claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5
 - Change default model from deprecated gpt-4o-mini to gpt-5.5
 - Add Extra High (xhigh) reasoning effort level matching current API
 
 ### Fixed
+- Prevent the stacked translation panels from overlapping the action row on tablet and mobile widths; the page now grows and scrolls below 1024px
 - Sync auto-detect setting from Settings drawer without requiring page reload
 - Allow clearing saved API key via the Settings save flow
 - Prevent duplicate source and target languages when swapping with auto-detect enabled

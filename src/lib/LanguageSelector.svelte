@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ChevronDown, Languages, ArrowLeftRight } from 'lucide-svelte';
+  import { roughFrame } from './rough';
 
   export let sourceLang = "Detect language";
   export let targetLang = "English (US)";
@@ -57,7 +58,12 @@
     <ChevronDown size={16} class="chevron" aria-hidden="true" />
   </div>
 
-  <button class="swap-button" on:click={onSwap} aria-label="Swap source and target languages">
+  <button
+    class="swap-button"
+    on:click={onSwap}
+    aria-label="Swap source and target languages"
+    use:roughFrame={{ stroke: '--color-line', strokeWidth: 1.4, roughness: 1.3, radius: 999 }}
+  >
     <ArrowLeftRight size={16} />
   </button>
 
@@ -88,7 +94,7 @@
   .select-wrapper :global(.icon) {
     position: absolute;
     left: var(--space-3);
-    color: var(--color-text-tertiary);
+    color: var(--color-persimmon);
     pointer-events: none;
   }
 
@@ -104,49 +110,53 @@
     appearance: none;
     padding: var(--space-3) var(--space-8);
     padding-left: var(--space-3);
-    background: var(--color-bg);
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     font-size: 14px;
     font-weight: 500;
     color: var(--color-text-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
   }
 
   .select-wrapper.source select {
-    padding-left: 36px;
+    padding-left: 38px;
   }
 
   select:hover {
     border-color: var(--color-border-hover);
-    background: var(--color-surface);
+    background: var(--color-surface-alt);
   }
 
   select:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px var(--color-accent-bg);
+    box-shadow: 0 0 0 2px var(--color-accent-bg);
   }
 
   .swap-button {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    width: 44px;
+    height: 44px;
+    border: 1px solid transparent;
+    border-radius: 50%;
     background: var(--color-surface);
-    color: var(--color-text-tertiary);
+    color: var(--color-text-secondary);
     flex-shrink: 0;
-    transition: all 0.2s ease;
+  }
+
+  .swap-button :global(svg) {
+    position: relative;
+    z-index: 1;
   }
 
   .swap-button:hover {
-    background: var(--color-surface-alt);
-    border-color: var(--color-border-hover);
-    color: var(--color-accent);
+    color: var(--color-persimmon);
+    transform: rotate(180deg);
   }
 
   @media (max-width: 640px) {
@@ -154,13 +164,17 @@
       flex-direction: column;
       gap: var(--space-2);
     }
+
     .select-wrapper {
       width: 100%;
     }
+
     .swap-button {
       transform: rotate(90deg);
-      width: 32px;
-      height: 32px;
+    }
+
+    .swap-button:hover {
+      transform: rotate(270deg);
     }
   }
 </style>

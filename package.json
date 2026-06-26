@@ -15,7 +15,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "lucide-svelte": "^1.0.1"
+    "animejs": "^4.4.1",
+    "lucide-svelte": "^1.0.1",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",

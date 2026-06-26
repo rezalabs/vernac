@@ -3,7 +3,7 @@
   "entry": ["src/main.ts"],
   "project": ["src/**/*.ts", "src/**/*.svelte"],
   "ignore": [".pi/**"],
-  "ignoreDependencies": ["lucide-svelte", "svelte"],
+  "ignoreDependencies": ["lucide-svelte", "svelte", "roughjs", "animejs"],
   "ignoreBinaries": [],
   "rules": {
     "binaries": "warn",

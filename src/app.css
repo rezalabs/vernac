@@ -1,6 +1,8 @@
 :root {
   /* Typography */
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'IBM Plex Sans', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Bricolage Grotesque', cursive;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Segoe UI Mono', consolas, monospace;
 
   /* Spacing */
@@ -14,55 +16,69 @@
   --space-10: 40px;
 
   /* Borders & Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
 
-  /* Semantic colors - Warm Ink on Paper palette */
-  --color-bg: #f5f0eb;
-  --color-surface: #fcf9f6;
-  --color-surface-alt: #f0ebe5;
-  --color-border: #e2d9ce;
-  --color-border-hover: #cdc2b4;
-  --color-text-primary: #1f1d1a;
-  --color-text-secondary: #6b6259;
-  --color-text-tertiary: #a0988d;
-  --color-accent: #1a7a7a;
-  --color-accent-hover: #146060;
-  --color-accent-bg: #e8f2f2;
-  --color-accent-text: #fcf9f6;
-  --color-danger: #b33a3a;
-  --color-danger-bg: #f9ebeb;
-  --color-danger-border: #edcfcf;
-  --color-warning: #b3862a;
-  --color-warning-bg: #f8f0dc;
+  /* Semantic colors - "Translator's Notebook": ink & forest on warm paper */
+  --color-bg: #f5edda;
+  --color-surface: #fcf7ec;
+  --color-surface-alt: #efe6d2;
+  --color-border: #d9cdb1;
+  --color-border-hover: #c3b58f;
+  --color-line: #6f6757;
+  --color-line-soft: #cabfa3;
+  --color-text-primary: #21304f;
+  --color-text-secondary: #555a6b;
+  --color-text-tertiary: #645f4d;
+  --color-accent: #2f6b43;
+  --color-accent-hover: #245434;
+  --color-accent-deep: #1f4a2d;
+  --color-accent-bg: #dde9dc;
+  --color-accent-text: #fbf7ec;
+  --color-persimmon: #cf5a33;
+  --color-persimmon-soft: #f0dccf;
+  --color-danger: #a32f28;
+  --color-danger-bg: #f4dcd6;
+  --color-danger-border: #e6bdb4;
+  --color-warning: #b07d18;
+  --color-warning-bg: #f6e8c8;
+
+  /* Paper grain (data-URI image, not a gradient) */
+  --paper-dots: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='22'%20height='22'%3E%3Ccircle%20cx='1.5'%20cy='1.5'%20r='1.2'%20fill='%236f6757'%20fill-opacity='0.09'/%3E%3C/svg%3E");
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 6%);
-  --shadow-lg: 0 8px 20px -4px rgb(0 0 0 / 10%), 0 4px 8px -4px rgb(0 0 0 / 4%);
+  --shadow-sm: 0 1px 2px 0 rgb(33 35 25 / 8%);
+  --shadow-lg: 0 14px 30px -10px rgb(33 35 25 / 18%), 0 4px 10px -6px rgb(33 35 25 / 10%);
 }
 
-/* Dark mode - Warm charcoal palette */
+/* Dark mode - lamplight on a dark desk */
 :root.dark {
-  --color-bg: #141210;
-  --color-surface: #1c1917;
-  --color-surface-alt: #262320;
-  --color-border: #35302b;
-  --color-border-hover: #4a443e;
-  --color-text-primary: #eeeae5;
-  --color-text-secondary: #9c938a;
-  --color-text-tertiary: #6b6259;
-  --color-accent: #3ba6a6;
-  --color-accent-hover: #5abfbf;
-  --color-accent-bg: #1a3030;
-  --color-accent-text: #0f0d0b;
-  --color-danger: #e06060;
-  --color-danger-bg: #2d1717;
-  --color-danger-border: #4d2323;
-  --color-warning: #d4a030;
-  --color-warning-bg: #2d2410;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 20%);
-  --shadow-lg: 0 8px 20px -4px rgb(0 0 0 / 40%), 0 4px 8px -4px rgb(0 0 0 / 20%);
+  --color-bg: #15161a;
+  --color-surface: #1d1f26;
+  --color-surface-alt: #262a32;
+  --color-border: #34353d;
+  --color-border-hover: #474952;
+  --color-line: #7d7563;
+  --color-line-soft: #3a3a42;
+  --color-text-primary: #ece6d6;
+  --color-text-secondary: #aaa392;
+  --color-text-tertiary: #8b8472;
+  --color-accent: #5aa872;
+  --color-accent-hover: #71bd88;
+  --color-accent-deep: #2f6b43;
+  --color-accent-bg: #1d3326;
+  --color-accent-text: #14161a;
+  --color-persimmon: #e2774d;
+  --color-persimmon-soft: #36231a;
+  --color-danger: #e0695a;
+  --color-danger-bg: #36201c;
+  --color-danger-border: #533029;
+  --color-warning: #d6a23a;
+  --color-warning-bg: #322811;
+  --paper-dots: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='22'%20height='22'%3E%3Ccircle%20cx='1.5'%20cy='1.5'%20r='1.2'%20fill='%23ece6d6'%20fill-opacity='0.05'/%3E%3C/svg%3E");
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 30%);
+  --shadow-lg: 0 16px 34px -12px rgb(0 0 0 / 55%), 0 4px 10px -6px rgb(0 0 0 / 35%);
 }
 
 * {
@@ -75,6 +91,7 @@ body {
   font-size: 15px;
   line-height: 1.5;
   background-color: var(--color-bg);
+  background-image: var(--paper-dots);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -86,20 +103,32 @@ body {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
   overflow: hidden;
 }
 
+/* Once the two pages stack, let the notebook grow and the page scroll */
+@media (width <= 1024px) {
+  #app {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+}
+
 h1, h2, h3, h4 {
   margin: 0;
+  font-family: var(--font-display);
   font-weight: 600;
   color: var(--color-text-primary);
-  line-height: 1.3;
+  line-height: 1.25;
+  text-wrap: balance;
 }
 
 p {
   margin: 0;
+  text-wrap: pretty;
 }
 
 button {
@@ -109,7 +138,7 @@ button {
   background: none;
   padding: 0;
   color: inherit;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
 input, select, textarea {
@@ -117,16 +146,51 @@ input, select, textarea {
   font-size: 14px;
 }
 
+/* The notebook "leaf" surface. Hand-drawn frames are layered on top via use:roughFrame. */
 .card {
+  position: relative;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.card.is-inked {
+  border-color: transparent;
+}
+
+/* Hand-drawn frame overlay produced by the roughFrame action */
+.rough-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Entrance: a gentle settle, as if the page is being laid open */
+@keyframes leaf-in {
+  from {
+    opacity: 0%;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 100%;
+    transform: translateY(0);
+  }
+}
+
+.enter {
+  animation: leaf-in 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -135,11 +199,14 @@ input, select, textarea {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-border-hover);
+  background-clip: padding-box;
 }
 
 /* Selection styling */
@@ -152,6 +219,7 @@ input, select, textarea {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 button:focus:not(:focus-visible),
@@ -159,4 +227,14 @@ input:focus:not(:focus-visible),
 select:focus:not(:focus-visible),
 textarea:focus:not(:focus-visible) {
   outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
+
+  * {
+    scroll-behavior: auto;
+  }
 }

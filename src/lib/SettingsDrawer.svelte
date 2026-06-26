@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { X, Eye, EyeOff, Code, Server, Lock, Globe, Trash2, Check, ExternalLink, Brain } from 'lucide-svelte';
+  import { X, Eye, EyeOff, Code, Server, Lock, Globe, Trash2, Check, ExternalLink, Brain, Coffee, Heart } from 'lucide-svelte';
   import { fade, fly } from 'svelte/transition';
   import { onMount } from 'svelte';
   import ConfirmModal from './ConfirmModal.svelte';
+  import { roughFrame } from './rough';
 
   export let isOpen: boolean;
   export let onClose: () => void;
@@ -220,11 +221,11 @@
               Reasoning
             </label>
             <select id="reasoning" bind:value={reasoningEffort}>
-              <option value="none">None — fastest</option>
+              <option value="none">None: fastest</option>
               <option value="low">Low</option>
               <option value="medium">Medium</option>
-              <option value="high">High — most thorough</option>
-              <option value="xhigh">Extra High — maximum depth</option>
+              <option value="high">High: most thorough</option>
+              <option value="xhigh">Extra High: maximum depth</option>
             </select>
             <p class="helper">Controls reasoning depth for models that support extended thinking.</p>
           </div>
@@ -315,6 +316,28 @@
             </div>
           </div>
 
+          <div class="support-links">
+            <div class="section-title">Support</div>
+
+            <a href="https://buymeacoffee.com/rezalabs" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="icon-wrapper"><Coffee size={16} /></span>
+              <div class="link-info">
+                <span class="link-title">Buy Me a Coffee</span>
+                <p>Support development with a one-time donation.</p>
+              </div>
+              <ExternalLink size={14} class="link-external" />
+            </a>
+
+            <a href="https://ko-fi.com/rezalabs" target="_blank" rel="noopener noreferrer" class="about-link">
+              <span class="icon-wrapper"><Heart size={16} /></span>
+              <div class="link-info">
+                <span class="link-title">Ko-fi</span>
+                <p>Buy us a coffee on Ko-fi.</p>
+              </div>
+              <ExternalLink size={14} class="link-external" />
+            </a>
+          </div>
+
           <div class="footer-links">
             <span class="copyright">&copy;</span>
             <a href="https://rezalabs.com" target="_blank" rel="noopener noreferrer" class="footer-link">
@@ -330,9 +353,11 @@
           <Trash2 size={16} />
           <span>Clear settings</span>
         </button>
-        <button class="save-button" onclick={handleSave}>
-          <Check size={16} />
-          <span>Save settings</span>
+        <button class="save-button" onclick={handleSave} use:roughFrame={{ stroke: '--color-accent-deep', strokeWidth: 1.5, roughness: 1.3, radius: 10 }}>
+          <span class="sb-inner">
+            <Check size={16} />
+            <span>Save settings</span>
+          </span>
         </button>
       </div>
     </div>
@@ -354,41 +379,40 @@
   .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgb(20 20 16 / 45%);
     z-index: 1000;
     display: flex;
     justify-content: flex-end;
   }
 
   :global(.dark) .overlay {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgb(0 0 0 / 60%);
   }
 
   .drawer {
     width: 100%;
-    max-width: 400px;
+    max-width: 410px;
     height: 100%;
     background: var(--color-surface);
+    background-image: var(--paper-dots);
+    border-left: 2px dashed var(--color-line-soft);
     display: flex;
     flex-direction: column;
-    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.1);
-  }
-
-  :global(.dark) .drawer {
-    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-lg);
   }
 
   .drawer-header {
     padding: var(--space-6);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px dashed var(--color-line-soft);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
 
   .title-group h2 {
-    font-size: 18px;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 700;
     margin-bottom: 4px;
   }
 
@@ -419,12 +443,13 @@
   }
 
   .section-title {
+    font-family: var(--font-display);
     font-size: 12px;
     font-weight: 700;
-    color: var(--color-text-tertiary);
+    color: var(--color-persimmon);
     margin-bottom: var(--space-4);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
   }
 
   .field {
@@ -435,6 +460,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    font-family: var(--font-display);
     font-size: 13px;
     font-weight: 600;
     color: var(--color-text-secondary);
@@ -467,7 +493,7 @@
   input[type="text"]:focus, input[type="password"]:focus, select:focus {
     outline: none;
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px var(--color-accent-bg);
+    box-shadow: 0 0 0 2px var(--color-accent-bg);
   }
 
   input::placeholder {
@@ -663,6 +689,16 @@
     line-height: 1.3;
   }
 
+  .support-links {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px dashed var(--color-line-soft);
+  }
+
+  .support-links .section-title {
+    margin-bottom: var(--space-3);
+  }
+
   .footer-links {
     display: flex;
     align-items: center;
@@ -670,7 +706,7 @@
     gap: var(--space-2);
     margin-top: var(--space-6);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px dashed var(--color-line-soft);
   }
 
   .copyright {
@@ -697,7 +733,7 @@
   /* Footer buttons */
   .drawer-footer {
     padding: var(--space-5) var(--space-6);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px dashed var(--color-line-soft);
     display: flex;
     gap: var(--space-3);
   }
@@ -713,9 +749,10 @@
     background: var(--color-danger-bg);
     color: var(--color-danger);
     border-radius: var(--radius-md);
+    font-family: var(--font-display);
     font-size: 13px;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   }
 
   .danger-button:hover {
@@ -725,18 +762,27 @@
   }
 
   .save-button {
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
     padding: var(--space-3);
     background: var(--color-accent);
     color: var(--color-accent-text);
     border-radius: var(--radius-md);
+    font-family: var(--font-display);
     font-size: 13px;
     font-weight: 600;
-    transition: all 0.2s;
+    transition: background-color 0.2s;
+  }
+
+  .sb-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .save-button:hover {
