@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+-
+
+### Changed
+-
+
+### Deprecated
+-
+
+### Removed
+-
+
+### Fixed
+-
+
+### Security
+-
+
+## [1.1.0] - 2026-06-26
+
+### Added
 - Add support and donation links (Buy Me a Coffee, Ko-fi) to the Settings drawer
 
 ### Changed
@@ -51,5 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Direct API calls to the configured provider.
 - No analytics or tracking.
 
-[Unreleased]: https://github.com/rezalabs/vernac/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/rezalabs/vernac/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/rezalabs/vernac/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rezalabs/vernac/releases/tag/v1.0.0
