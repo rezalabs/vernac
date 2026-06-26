@@ -7,23 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
-### Added
--
-
-### Changed
--
-
-### Deprecated
--
-
-### Removed
--
-
 ### Fixed
--
-
-### Security
--
+- Fix em dash in package.json description
+- Fix supported version table in SECURITY.md
+- Fix duplicate entries in CODE_OF_CONDUCT.md
+- Fix incomplete script listing in CONTRIBUTING.md
+- Fix stylelint glob quoting for Windows compatibility
+- Add .gitattributes for line ending normalization
 
 ## [1.1.0] - 2026-06-26
 

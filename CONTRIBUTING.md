@@ -67,6 +67,8 @@ npm run dev
 | `npm run build` | Build for production |
 | `npm run preview` | Preview production build locally |
 | `npm run check` | Run TypeScript and Svelte type checking |
+| `npm run lint:css` | Lint CSS with Stylelint |
+| `npm run knip` | Check for unused files, exports, and dependencies |
 
 ### Tech Stack
 

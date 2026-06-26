@@ -24,12 +24,6 @@ community include:
   and learning from the experience
 * Focusing on what is best not just for us as individuals, but for the overall
   community
-* Using welcoming and inclusive language
-* Being respectful of differing opinions, viewpoints, and experiences
-* Attempting collaboration before conflict
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
-* Showing empathy towards other community members
 
 Examples of unacceptable behavior include:
 
@@ -41,11 +35,6 @@ Examples of unacceptable behavior include:
   without their explicit permission
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
-* The use of sexualized language or imagery
-* Trolling, insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information without explicit permission
-* Other conduct reasonably considered inappropriate in a professional setting
 
 ## Enforcement Responsibilities
 

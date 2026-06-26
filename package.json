@@ -1,7 +1,7 @@
 {
   "name": "vernac",
   "version": "1.1.0",
-  "description": "Privacy-focused AI translation app. Translate text using OpenAI, Anthropic Claude, or local Ollama models — no sign-in required, no data sent to third-party servers.",
+  "description": "Privacy-focused AI translation app. Translate text using OpenAI, Anthropic Claude, or local Ollama models; no sign-in required, no data sent to third-party servers.",
   "private": true,
   "license": "MIT",
   "author": "RezaLabs",
@@ -11,7 +11,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
     "dev": "vite",
     "knip": "knip --production --strict",
-    "lint:css": "stylelint 'src/**/*.css'",
+    "lint:css": "stylelint src/**/*.css",
     "preview": "vite preview"
   },
   "dependencies": {
