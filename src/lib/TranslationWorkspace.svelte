@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Trash2, Sparkles, Copy, Check } from 'lucide-svelte';
+  import { Trash2, Sparkles, Copy, Check, AlertCircle, RotateCcw, Square } from 'lucide-svelte';
   import LanguageSelector from './LanguageSelector.svelte';
   import TextAreaPanel from './TextAreaPanel.svelte';
   import { roughFrame } from './rough';
@@ -8,10 +8,14 @@
     const isMod = event.ctrlKey || event.metaKey;
     const isShift = event.shiftKey;
 
-    // Ctrl/Cmd + Enter → Translate
+    // Ctrl/Cmd + Enter → Translate or Stop
     if (isMod && event.key === 'Enter') {
       event.preventDefault();
-      if (!isTranslating) handleTranslate();
+      if (isTranslating) {
+        handleStop();
+      } else {
+        handleTranslate();
+      }
       return;
     }
 
@@ -42,10 +46,17 @@
       return;
     }
 
-    // Escape → Dismiss error
-    if (event.key === 'Escape' && translationError) {
-      translationError = null;
-      return;
+    // Escape → Stop translation or dismiss error
+    if (event.key === 'Escape') {
+      if (isTranslating && abortController) {
+        event.preventDefault();
+        handleStop();
+        return;
+      }
+      if (translationError) {
+        translationError = null;
+        return;
+      }
     }
   }
 
@@ -54,6 +65,7 @@
   let sourceText = "";
   let translatedText = "";
   let isTranslating = false;
+  let abortController: AbortController | null = null;
   let translationError: string | null = null;
   let copied = false;
   let copiedTimer: ReturnType<typeof setTimeout> | null = null;
@@ -95,12 +107,13 @@
 
   function getApiEndpoint(): string {
     const provider = getProvider();
+    const customEndpoint = localStorage.getItem('apiEndpoint');
     if (provider === 'Anthropic') {
-      return 'https://api.anthropic.com/v1/messages';
+      return customEndpoint || 'https://api.anthropic.com/v1/messages';
     } else if (provider === 'Local (Ollama)') {
-      return 'http://localhost:11434/api/chat';
+      return customEndpoint || 'http://localhost:11434/api/chat';
     }
-    return localStorage.getItem('apiEndpoint') || 'https://api.openai.com/v1/chat/completions';
+    return customEndpoint || 'https://api.openai.com/v1/chat/completions';
   }
 
   function getDisplayLabel(langName: string): string {
@@ -149,6 +162,27 @@
     return langMap[langName] || langName;
   }
 
+  function formatApiError(err: unknown, status?: number): string {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      return 'Translation cancelled.';
+    }
+    const message = err instanceof Error ? err.message : 'Translation failed.';
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      return 'Network error. Check your internet connection and try again.';
+    }
+    if (status) {
+      if (status === 401) return 'Invalid API key. Check your key in Settings.';
+      if (status === 403) return 'Access denied. Your API key may lack permission for this model.';
+      if (status === 404) return 'Endpoint not found. Verify your API configuration in Settings.';
+      if (status === 429) return 'Rate limited. Wait a moment and try again.';
+      if (status >= 500) return 'Server error. The API service may be experiencing issues. Try again.';
+    }
+    if (message.includes('timed out') || message.includes('timeout')) {
+      return 'Translation timed out. The text may be too long or the model is slow to respond. Try shorter text or a faster model.';
+    }
+    return message;
+  }
+
   async function handleTranslate() {
     if (!sourceText.trim()) {
       translationError = "Enter text to translate.";
@@ -157,9 +191,22 @@
 
     const apiKey = getApiKey();
     if (!apiKey) {
-      translationError = "API key required. Enter one above or open Settings to configure.";
+      translationError = "API key required. Click 'Fix in Settings' below to configure your key.";
       return;
     }
+
+    // Cancel any in-flight request before starting a new one
+    if (abortController) {
+      abortController.abort();
+    }
+
+    abortController = new AbortController();
+    const { signal } = abortController;
+
+    const TRANSLATE_TIMEOUT_MS = 120_000;
+    const timeoutId = setTimeout(() => {
+      abortController?.abort();
+    }, TRANSLATE_TIMEOUT_MS);
 
     isTranslating = true;
     translationError = null;
@@ -182,6 +229,8 @@
 
       const prompt = `Translate the following text from ${sourceLanguage} to ${targetLanguage}. ${formattingInstruction} Only provide the translation without any explanations or additional text.\n\nText to translate:\n${sourceText}`;
 
+      let response: Response;
+
       if (provider === 'Anthropic') {
         const body: Record<string, unknown> = {
           model: model,
@@ -194,19 +243,20 @@
           body.thinking = { type: 'enabled', budget_tokens: budgetTokens };
         }
 
-        const response = await fetch(endpoint, {
+        response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': apiKey,
             'anthropic-version': '2023-06-01'
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
+          signal
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error?.message || `API error: ${response.status}`);
+          throw Object.assign(new Error(errorData.error?.message || `API error: ${response.status}`), { status: response.status });
         }
 
         const data = await response.json();
@@ -223,16 +273,17 @@
           body.options = { num_ctx: ctxSize };
         }
 
-        const response = await fetch(endpoint, {
+        response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
+          signal
         });
 
         if (!response.ok) {
-          throw new Error(`Ollama error: ${response.status}`);
+          throw Object.assign(new Error(`Ollama error: ${response.status}`), { status: response.status });
         }
 
         const data = await response.json();
@@ -249,18 +300,19 @@
           delete body.max_tokens;
         }
 
-        const response = await fetch(endpoint, {
+        response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(body),
+          signal
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error?.message || `API error: ${response.status}`);
+          throw Object.assign(new Error(errorData.error?.message || `API error: ${response.status}`), { status: response.status });
         }
 
         const data = await response.json();
@@ -271,10 +323,25 @@
         navigator.clipboard.writeText(translatedText).catch(() => {});
       }
     } catch (err) {
-      translationError = err instanceof Error ? err.message : 'Translation failed. Check your API configuration.';
-      translatedText = '';
+      const errorWithStatus = err as Error & { status?: number };
+      const isCancelled = err instanceof DOMException && err.name === 'AbortError';
+      if (!isCancelled) {
+        translationError = formatApiError(err, errorWithStatus.status);
+        translatedText = '';
+      }
     } finally {
+      clearTimeout(timeoutId);
+      if (abortController?.signal === signal) {
+        abortController = null;
+      }
       isTranslating = false;
+    }
+  }
+
+  function handleStop() {
+    if (abortController) {
+      abortController.abort();
+      abortController = null;
     }
   }
 
@@ -320,7 +387,14 @@
   {#if translationError}
     <div class="error-message" role="alert">
       <span class="error-icon" aria-hidden="true">!</span>
-      <span>{translationError}</span>
+      <span class="error-text">{translationError}</span>
+      {#if translationError.includes('API key') || translationError.includes('Endpoint')}
+        <button class="error-action" on:click={() => translationError = null} title="Press Ctrl+, to open Settings">Fix in Settings</button>
+      {/if}
+      <button class="error-action retry" on:click={handleTranslate} aria-label="Retry translation">
+        <RotateCcw size={14} />
+        Retry
+      </button>
       <button class="error-dismiss" on:click={() => translationError = null} aria-label="Dismiss error">&times;</button>
     </div>
   {/if}
@@ -352,18 +426,15 @@
     <div class="action-center">
       <button
         class="translate-button"
-        on:click={handleTranslate}
-        disabled={isTranslating}
-        title="Translate (Ctrl+Enter)"
+        on:click={isTranslating ? handleStop : handleTranslate}
+        disabled={!isTranslating && !sourceText.trim()}
+        title={isTranslating ? 'Stop translation (Escape)' : 'Translate (Ctrl+Enter)'}
         use:roughFrame={{ stroke: '--color-accent-deep', strokeWidth: 1.6, roughness: 1.25, radius: 10 }}
       >
         <span class="bt-inner">
           {#if isTranslating}
-            <svg class="spinner" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <circle cx="12" cy="12" r="10" opacity="0.25" />
-              <path d="M12 2a10 10 0 0 1 10 10" />
-            </svg>
-            <span>Translating…</span>
+            <Square size={14} />
+            <span>Stop</span>
           {:else}
             <Sparkles size={18} />
             <span>Translate</span>
@@ -407,6 +478,7 @@
     font-size: 13px;
     line-height: 1.5;
     transform: rotate(-0.4deg);
+    flex-wrap: wrap;
   }
 
   .error-icon {
@@ -424,8 +496,33 @@
     flex-shrink: 0;
   }
 
+  .error-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .error-action {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-surface);
+    border: 1px solid var(--color-danger-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-danger);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+  }
+
+  .error-action:hover {
+    background: var(--color-danger);
+    border-color: var(--color-danger);
+    color: var(--color-accent-text);
+  }
+
   .error-dismiss {
-    margin-left: auto;
     font-size: 18px;
     color: var(--color-danger);
     opacity: 0.6;
@@ -501,7 +598,7 @@
   }
 
   .translate-button:disabled {
-    opacity: 0.6;
+    opacity: 0.4;
     cursor: not-allowed;
   }
 
@@ -511,14 +608,6 @@
     line-height: 1;
     color: var(--color-text-tertiary);
     transform: rotate(-2deg);
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .spinner {
-    animation: spin 0.8s linear infinite;
   }
 
   .secondary-button,
@@ -596,8 +685,5 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .spinner {
-      animation-duration: 1.6s;
-    }
   }
 </style>

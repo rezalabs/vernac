@@ -11,13 +11,15 @@
   let focused = false;
 
   $: charCount = value.length;
+  $: isNearLimit = charCount > maxLength * 0.9;
+  $: isAtLimit = charCount >= maxLength;
 </script>
 
 <div class="panel">
   <div class="panel-header">
     <span class="label">{label}</span>
     {#if value}
-      <span class="char-count">{charCount}</span>
+      <span class="char-count" class:near-limit={isNearLimit && !isAtLimit} class:at-limit={isAtLimit}>{charCount} / {maxLength}</span>
     {/if}
   </div>
 
@@ -77,6 +79,15 @@
     font-size: 12px;
     color: var(--color-text-tertiary);
     font-family: var(--font-mono);
+  }
+
+  .char-count.near-limit {
+    color: var(--color-warning);
+  }
+
+  .char-count.at-limit {
+    color: var(--color-danger);
+    font-weight: 600;
   }
 
   .textarea-container {

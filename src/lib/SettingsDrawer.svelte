@@ -23,6 +23,7 @@
   let preserveFormatting = true;
 
   let showProviderConfirm = false;
+  let showClearConfirm = false;
   let pendingProvider: string | null = null;
 
   const providerModels: Record<string, string[]> = {
@@ -56,6 +57,8 @@
     localStorage.setItem('useCustomModel', String(useCustomModel));
     if (apiEndpoint.trim()) {
       localStorage.setItem('apiEndpoint', apiEndpoint.trim());
+    } else {
+      localStorage.removeItem('apiEndpoint');
     }
     localStorage.setItem('reasoningEffort', reasoningEffort);
     localStorage.setItem('autoDetect', String(autoDetect));
@@ -230,16 +233,20 @@
             <p class="helper">Controls reasoning depth for models that support extended thinking.</p>
           </div>
 
-          {#if provider === 'OpenAI Compatible'}
+          {#if provider === 'OpenAI Compatible' || provider === 'Local (Ollama)'}
             <div class="field">
               <label for="api-endpoint">Custom API Endpoint</label>
               <input
                 id="api-endpoint"
                 type="text"
                 bind:value={apiEndpoint}
-                placeholder="https://api.openai.com/v1/chat/completions"
+                placeholder={provider === 'Local (Ollama)' ? 'http://localhost:11434/api/chat' : 'https://api.openai.com/v1/chat/completions'}
               />
-              <p class="helper">Override the default endpoint for custom providers like LM Studio, Together AI, etc.</p>
+              <p class="helper">
+                {provider === 'Local (Ollama)'
+                  ? 'Override the default Ollama server URL if running on a different host or port.'
+                  : 'Override the default endpoint for custom providers like LM Studio, Together AI, etc.'}
+              </p>
             </div>
           {/if}
         </section>
@@ -349,7 +356,7 @@
       </div>
 
       <div class="drawer-footer">
-        <button class="danger-button" onclick={handleClearSettings}>
+        <button class="danger-button" onclick={() => showClearConfirm = true}>
           <Trash2 size={16} />
           <span>Clear settings</span>
         </button>
@@ -373,6 +380,17 @@
   onConfirm={confirmProviderChange}
   onCancel={cancelProviderChange}
   type="warning"
+/>
+
+<ConfirmModal
+  bind:isOpen={showClearConfirm}
+  title="Clear All Settings"
+  message="This will remove your API key, provider, model, and all preferences. You'll need to reconfigure everything. Continue?"
+  confirmText="Clear Everything"
+  cancelText="Keep Settings"
+  onConfirm={handleClearSettings}
+  onCancel={() => showClearConfirm = false}
+  type="danger"
 />
 
 <style>

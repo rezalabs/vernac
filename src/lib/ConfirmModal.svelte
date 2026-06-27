@@ -1,6 +1,7 @@
 <script lang="ts">
   import { X, AlertTriangle } from 'lucide-svelte';
   import { fade, fly } from 'svelte/transition';
+  import { onMount } from 'svelte';
 
   export let isOpen = false;
   export let title = "Confirm Action";
@@ -24,7 +25,49 @@
   function handleBackdropClick() {
     handleCancel();
   }
+
+  function handleModalKeydown(event: KeyboardEvent) {
+    if (!isOpen) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      handleCancel();
+      return;
+    }
+    // Focus trap: keep Tab/Shift+Tab cycling within the modal
+    if (event.key === 'Tab') {
+      const modal = document.querySelector('[role="dialog"]');
+      if (!modal) return;
+      const focusable = modal.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey) {
+        if (document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  }
+
+  onMount(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => {
+        const modal = document.querySelector('[role="dialog"]');
+        if (modal instanceof HTMLElement) modal.focus();
+      });
+    }
+  });
 </script>
+
+<svelte:window onkeydown={handleModalKeydown} />
 
 {#if isOpen}
   <!-- svelte-ignore a11y-click-events-have-key-events -->

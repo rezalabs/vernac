@@ -7,7 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- Add request timeout (120s) and cancellation via AbortController for translation operations
+- Add stop button to cancel in-flight translations, with Escape and Ctrl+Enter keyboard support
+- Add retry button in error banner for failed translations
+- Add actionable error messages per HTTP status code (401, 403, 404, 429, 500+)
+- Add contextual "Fix in Settings" link when errors relate to API key or endpoint configuration
+- Add Escape key handler and Tab focus trap to confirmation dialogs
+- Add system theme change listener for real-time light/dark switching when no explicit user preference is set
+- Add visual confirmation feedback on API key save before the onboarding panel dismisses
+- Add clear-all-settings confirmation dialog with danger-styled prompt to prevent accidental data loss
+- Add custom API endpoint configuration for Ollama provider in Settings drawer
+- Add online/offline detection with warning banner when internet connectivity is lost
+- Add character limit threshold warnings to textarea panels (orange at 90%, red at 100%)
+
+### Changed
+- Translate button now shows "Stop" with square icon while translation is active, replacing the indeterminate spinner
+- Character count display now shows used/maximum ratio with color-coded threshold indicators
+
 ### Fixed
+- Fix Ctrl+Enter keyboard shortcut: now toggles translation on/off instead of only starting
+- Fix Escape key behavior: now cancels in-flight translation in addition to dismissing errors
+- Fix translate button disabled state: now disabled when input is empty instead of being disabled during translation
+- Fix custom API endpoint field in Settings: clearing the field now removes the stale localStorage value
+- Fix Ollama endpoint resolution: now honors custom endpoint from Settings instead of always using hardcoded localhost URL
 - Fix em dash in package.json description
 - Fix supported version table in SECURITY.md
 - Fix duplicate entries in CODE_OF_CONDUCT.md

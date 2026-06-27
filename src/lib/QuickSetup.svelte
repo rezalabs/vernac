@@ -9,15 +9,20 @@
   let apiKey = "";
   let showApiKey = false;
   let isSaved = false;
+  let isSaving = false;
 
   function toggleExpand() {
     isExpanded = !isExpanded;
   }
 
-  function handleSaveKey() {
+  async function handleSaveKey() {
     if (apiKey.trim()) {
+      isSaving = true;
       localStorage.setItem('apiKey', apiKey.trim());
+      // Brief delay so the user sees the confirmation
+      await new Promise(r => setTimeout(r, 500));
       isSaved = true;
+      isSaving = false;
       apiKey = "";
     }
   }
@@ -86,9 +91,14 @@
         <p class="helper">Stored locally in your browser. Open Settings to configure provider, model, and custom endpoints.</p>
       </div>
       <div class="actions">
-        <button class="save-button" on:click={handleSaveKey} disabled={!apiKey.trim()}>
-          <Check size={16} />
-          Save &amp; start translating
+        <button class="save-button" on:click={handleSaveKey} disabled={!apiKey.trim() || isSaving}>
+          {#if isSaving}
+            <Check size={16} />
+            Saving…
+          {:else}
+            <Check size={16} />
+            Save &amp; start translating
+          {/if}
         </button>
       </div>
       <div class="security-notice">

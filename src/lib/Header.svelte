@@ -25,6 +25,17 @@
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     isDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
     applyTheme(isDark);
+
+    // Follow system theme changes when the user hasn't set an explicit preference
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    function handleSystemChange(event: MediaQueryListEvent) {
+      if (localStorage.getItem('theme') === null) {
+        isDark = event.matches;
+        applyTheme(isDark);
+      }
+    }
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
   });
 </script>
 

@@ -3,9 +3,12 @@
   import TranslationWorkspace from './lib/TranslationWorkspace.svelte';
   import QuickSetup from './lib/QuickSetup.svelte';
   import SettingsDrawer from './lib/SettingsDrawer.svelte';
+  import { onMount } from 'svelte';
+  import { WifiOff } from 'lucide-svelte';
 
   let isSettingsOpen = false;
   let settingsClosedAt = 0;
+  let isOnline = true;
 
   function toggleSettings() {
     isSettingsOpen = !isSettingsOpen;
@@ -33,11 +36,30 @@
       return;
     }
   }
+
+  onMount(() => {
+    isOnline = navigator.onLine;
+    function goOnline() { isOnline = true; }
+    function goOffline() { isOnline = false; }
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  });
 </script>
 
 <svelte:window onkeydown={handleAppKeydown} />
 
 <div id="app">
+  {#if !isOnline}
+    <div class="offline-banner" role="alert">
+      <WifiOff size={14} />
+      <span>You're offline. Translation requires an internet connection.</span>
+    </div>
+  {/if}
+
   <Header onToggleSettings={toggleSettings} />
 
   <main>
@@ -49,6 +71,21 @@
 </div>
 
 <style>
+  .offline-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-md);
+    color: var(--color-warning);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: var(--space-3);
+  }
+
   main {
     flex: 1;
     display: flex;
