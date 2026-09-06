@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+-
+
+### Changed
+-
+
+### Deprecated
+-
+
+### Removed
+-
+
+### Fixed
+-
+
+### Security
+-
+
+## [1.2.0] - 2026-09-06
+
+### Added
 - Persist the selected language pair and restore it on return visits
 - Persist source and translation drafts (debounced) so a refresh or accidental tab close keeps in-progress work
 - Show a "Translating…" placeholder in the output panel while a request is in flight
@@ -102,6 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Direct API calls to the configured provider.
 - No analytics or tracking.
 
-[Unreleased]: https://github.com/rezalabs/vernac/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/rezalabs/vernac/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/rezalabs/vernac/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/rezalabs/vernac/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rezalabs/vernac/releases/tag/v1.0.0
