@@ -1,50 +1,18 @@
 <script lang="ts">
   import { ChevronDown, Languages, ArrowLeftRight } from 'lucide-svelte';
   import { roughFrame } from './rough';
+  import { ALL_LANGUAGES, DETECT_LANGUAGE } from './languages';
 
-  export let sourceLang = "Detect language";
-  export let targetLang = "English (US)";
+  export let sourceLang = DETECT_LANGUAGE;
+  export let targetLang = 'English (US)';
   export let onSwap: () => void;
   export let autoDetect = true;
 
-  $: if (!autoDetect && sourceLang === "Detect language") {
-    sourceLang = "English (US)";
+  $: if (!autoDetect && sourceLang === DETECT_LANGUAGE) {
+    sourceLang = 'English (US)';
   }
 
-  const allLanguages = [
-    "English (US)",
-    "English (UK)",
-    "Spanish",
-    "French",
-    "German",
-    "Italian",
-    "Portuguese",
-    "Portuguese (Brazil)",
-    "Russian",
-    "Chinese (Simplified)",
-    "Chinese (Traditional)",
-    "Japanese",
-    "Korean",
-    "Arabic",
-    "Hindi",
-    "Turkish",
-    "Dutch",
-    "Polish",
-    "Swedish",
-    "Norwegian",
-    "Danish",
-    "Finnish",
-    "Greek",
-    "Czech",
-    "Hungarian",
-    "Romanian",
-    "Thai",
-    "Vietnamese",
-    "Indonesian",
-    "Malay"
-  ];
-
-  $: sourceLanguages = autoDetect ? ["Detect language", ...allLanguages] : allLanguages;
+  $: sourceLanguages = autoDetect ? [DETECT_LANGUAGE, ...ALL_LANGUAGES] : ALL_LANGUAGES;
 </script>
 
 <div class="selector-row">
@@ -69,7 +37,7 @@
 
   <div class="select-wrapper target">
     <select bind:value={targetLang} aria-label="Target language">
-      {#each allLanguages as lang}
+      {#each ALL_LANGUAGES as lang}
         <option>{lang}</option>
       {/each}
     </select>

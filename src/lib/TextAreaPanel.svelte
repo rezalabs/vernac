@@ -19,7 +19,15 @@
   <div class="panel-header">
     <span class="label">{label}</span>
     {#if value}
-      <span class="char-count" class:near-limit={isNearLimit && !isAtLimit} class:at-limit={isAtLimit}>{charCount} / {maxLength}</span>
+      <!-- The readonly output never enforces the limit: translations can legally
+           expand past it, and silently clamping them would corrupt the result. -->
+      <span class="char-count" class:near-limit={isNearLimit && !isAtLimit && !readonly} class:at-limit={isAtLimit && !readonly}>
+        {#if readonly}
+          {charCount} chars
+        {:else}
+          {charCount} / {maxLength}
+        {/if}
+      </span>
     {/if}
   </div>
 
@@ -43,7 +51,7 @@
       bind:value
       {placeholder}
       {readonly}
-      maxlength={maxLength}
+      maxlength={readonly ? undefined : maxLength}
       aria-label={label}
     ></textarea>
   </div>

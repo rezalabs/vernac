@@ -24,11 +24,17 @@
       isSaved = true;
       isSaving = false;
       apiKey = "";
+      // Hand the user straight to the input so "start translating" is literal.
+      document.getElementById('source-editor')?.focus();
     }
   }
 
   function checkApiKey() {
-    isSaved = !!localStorage.getItem('apiKey');
+    // Ollama runs locally without authentication, so onboarding is complete
+    // for Ollama users even with an empty key.
+    isSaved =
+      !!localStorage.getItem('apiKey') ||
+      localStorage.getItem('provider') === 'Local (Ollama)';
   }
 
   $: if (settingsClosedAt > 0) {
@@ -79,6 +85,9 @@
             type={showApiKey ? "text" : "password"}
             bind:value={apiKey}
             placeholder="Paste your API key"
+            on:keydown={(e) => {
+              if (e.key === 'Enter') handleSaveKey();
+            }}
           />
           <button class="toggle-password" on:click={() => showApiKey = !showApiKey} aria-label={showApiKey ? 'Hide API key' : 'Show API key'}>
             {#if showApiKey}

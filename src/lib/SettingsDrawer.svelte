@@ -1,7 +1,7 @@
 <script lang="ts">
   import { X, Eye, EyeOff, Code, Server, Lock, Globe, Trash2, Check, ExternalLink, Brain, Coffee, Heart } from 'lucide-svelte';
   import { fade, fly } from 'svelte/transition';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import ConfirmModal from './ConfirmModal.svelte';
   import { roughFrame } from './rough';
 
@@ -25,6 +25,40 @@
   let showProviderConfirm = false;
   let showClearConfirm = false;
   let pendingProvider: string | null = null;
+
+  // Validate at the boundary where values are saved, with actionable messages,
+  // so a mis-typed endpoint fails here instead of as a cryptic network error.
+  $: trimmedEndpoint = apiEndpoint.trim();
+  $: endpointFormatError =
+    trimmedEndpoint && !/^https?:\/\//i.test(trimmedEndpoint)
+      ? 'Endpoint must start with http:// or https://.'
+      : '';
+  $: endpointMixedContentWarning =
+    trimmedEndpoint &&
+    /^http:\/\//i.test(trimmedEndpoint) &&
+    !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/|$)/i.test(trimmedEndpoint) &&
+    window.location.protocol === 'https:'
+      ? 'Browsers block http:// requests from a secure page. Use https:// or a localhost URL.'
+      : '';
+  $: customModelError =
+    useCustomModel && !customModel.trim()
+      ? 'Enter a model name, or switch back to Preset.'
+      : '';
+  $: hasValidationErrors = Boolean(endpointFormatError || customModelError);
+
+  // Focus the drawer on open and hand focus back to the trigger on close so
+  // keyboard users are never stranded behind the overlay.
+  let drawerEl: HTMLDivElement | null = null;
+  let previouslyFocused: HTMLElement | null = null;
+
+  $: if (isOpen && !previouslyFocused) {
+    previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    queueMicrotask(() => drawerEl?.focus());
+  }
+
+  onDestroy(() => {
+    previouslyFocused?.focus();
+  });
 
   const providerModels: Record<string, string[]> = {
     'OpenAI Compatible': ['gpt-5.5', 'gpt-5.4', 'gpt-5.4-mini'],
@@ -67,6 +101,7 @@
   }
 
   function handleSave() {
+    if (hasValidationErrors) return;
     saveSettings();
     onClose();
   }
@@ -133,10 +168,19 @@
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="overlay" onclick={onClose} transition:fade={{ duration: 150 }}>
-    <div class="drawer" onclick={(e) => e.stopPropagation()} transition:fly={{ x: 420, duration: 250 }}>
+    <div
+      class="drawer"
+      bind:this={drawerEl}
+      onclick={(e) => e.stopPropagation()}
+      transition:fly={{ x: 420, duration: 250 }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-title"
+      tabindex="-1"
+    >
       <div class="drawer-header">
         <div class="title-group">
-          <h2>Settings</h2>
+          <h2 id="settings-title">Settings</h2>
           <p>All settings stored locally in your browser.</p>
         </div>
         <button class="close-button" onclick={onClose} aria-label="Close settings">
@@ -206,8 +250,13 @@
                   type="text"
                   bind:value={customModel}
                   placeholder="e.g., gpt-4.1-nano, llama3.3"
+                  aria-invalid={Boolean(customModelError)}
                 />
-                <p class="helper">Enter any model name supported by your provider.</p>
+                {#if customModelError}
+                  <p class="helper helper-error" role="alert">{customModelError}</p>
+                {:else}
+                  <p class="helper">Enter any model name supported by your provider.</p>
+                {/if}
               {:else}
                 <select bind:value={model}>
                   {#each availableModels as m}
@@ -241,7 +290,13 @@
                 type="text"
                 bind:value={apiEndpoint}
                 placeholder={provider === 'Local (Ollama)' ? 'http://localhost:11434/api/chat' : 'https://api.openai.com/v1/chat/completions'}
+                aria-invalid={Boolean(endpointFormatError)}
               />
+              {#if endpointFormatError}
+                <p class="helper helper-error" role="alert">{endpointFormatError}</p>
+              {:else if endpointMixedContentWarning}
+                <p class="helper helper-warning" role="alert">{endpointMixedContentWarning}</p>
+              {/if}
               <p class="helper">
                 {provider === 'Local (Ollama)'
                   ? 'Override the default Ollama server URL if running on a different host or port.'
@@ -360,7 +415,7 @@
           <Trash2 size={16} />
           <span>Clear settings</span>
         </button>
-        <button class="save-button" onclick={handleSave} use:roughFrame={{ stroke: '--color-accent-deep', strokeWidth: 1.5, roughness: 1.3, radius: 10 }}>
+        <button class="save-button" onclick={handleSave} disabled={hasValidationErrors} use:roughFrame={{ stroke: '--color-accent-deep', strokeWidth: 1.5, roughness: 1.3, radius: 10 }}>
           <span class="sb-inner">
             <Check size={16} />
             <span>Save settings</span>
@@ -542,6 +597,21 @@
     color: var(--color-text-tertiary);
     margin-top: var(--space-2);
     line-height: 1.5;
+  }
+
+  .helper-error {
+    color: var(--color-danger);
+    font-weight: 500;
+  }
+
+  .helper-warning {
+    color: var(--color-warning);
+    font-weight: 500;
+  }
+
+  .save-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
   /* Model Selection Tabs */

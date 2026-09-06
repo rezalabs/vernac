@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added
+- Persist the selected language pair and restore it on return visits
+- Persist source and translation drafts (debounced) so a refresh or accidental tab close keeps in-progress work
+- Show a "Translating…" placeholder in the output panel while a request is in flight
+- Show a warning banner when a response is cut off by the token limit (OpenAI `finish_reason`, Anthropic `stop_reason`) instead of silently returning partial text
+- Treat empty model responses as actionable errors instead of silently clearing the output
+- Validate the custom API endpoint in Settings (must be http/https) and warn about mixed-content blocking for http endpoints on secure pages
+- Validate the custom model name in Settings and disable Save while invalid
+- Add Enter-to-save in the Quick Setup API key field and focus the source editor after saving
+- Restore focus to the settings trigger and modal opener on close, and move focus into the Settings drawer and confirm dialogs on open
 - Add request timeout (120s) and cancellation via AbortController for translation operations
 - Add stop button to cancel in-flight translations, with Escape and Ctrl+Enter keyboard support
 - Add retry button in error banner for failed translations
@@ -22,10 +31,19 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 - Add character limit threshold warnings to textarea panels (orange at 90%, red at 100%)
 
 ### Changed
+- Ollama users no longer need an API key: the key requirement and the onboarding banner now respect the local provider
+- Failed translations no longer clear the previous result, so work is never lost on error
+- Timeout-triggered cancellation now reports a timeout message instead of "Translation cancelled"
+- Automatic copy on completion now shows the same "Copied" confirmation as manual copy
+- Keyboard shortcuts (copy, focus source, clear) match on physical key codes so they work on non-Latin keyboard layouts
+- "Fix in Settings" in the error banner now opens the Settings drawer instead of only dismissing the message
+- Character count on the output panel shows a plain count without a limit, since translations may legitimately exceed the input limit
 - Translate button now shows "Stop" with square icon while translation is active, replacing the indeterminate spinner
 - Character count display now shows used/maximum ratio with color-coded threshold indicators
 
 ### Fixed
+- Fix Anthropic extended thinking: `max_tokens` now exceeds the thinking budget (the API rejects the old 4096 value for medium+ reasoning), and the first text block is extracted instead of assuming index 0 when thinking blocks lead the content array
+- Fix Escape closing the Settings drawer underneath an open confirmation dialog; the dialog now owns Escape
 - Fix Ctrl+Enter keyboard shortcut: now toggles translation on/off instead of only starting
 - Fix Escape key behavior: now cancels in-flight translation in addition to dismissing errors
 - Fix translate button disabled state: now disabled when input is empty instead of being disabled during translation

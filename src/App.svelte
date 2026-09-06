@@ -29,8 +29,9 @@
       return;
     }
 
-    // Escape → Close settings if open
-    if (event.key === 'Escape' && isSettingsOpen) {
+    // Escape → Close settings if open, but never underneath an open confirm
+    // dialog: the modal owns Escape while it is on screen.
+    if (event.key === 'Escape' && isSettingsOpen && !document.querySelector('[data-confirm-modal]')) {
       event.preventDefault();
       handleSettingsClose();
       return;
@@ -64,7 +65,7 @@
 
   <main>
     <QuickSetup settingsClosedAt={settingsClosedAt} />
-    <TranslationWorkspace settingsClosedAt={settingsClosedAt} />
+    <TranslationWorkspace settingsClosedAt={settingsClosedAt} onOpenSettings={toggleSettings} />
   </main>
 
   <SettingsDrawer isOpen={isSettingsOpen} onClose={handleSettingsClose} />

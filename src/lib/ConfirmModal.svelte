@@ -1,7 +1,6 @@
 <script lang="ts">
   import { X, AlertTriangle } from 'lucide-svelte';
   import { fade, fly } from 'svelte/transition';
-  import { onMount } from 'svelte';
 
   export let isOpen = false;
   export let title = "Confirm Action";
@@ -26,6 +25,23 @@
     handleCancel();
   }
 
+  // Focus the dialog when it opens and hand focus back to the trigger when it
+  // closes, so keyboard users start inside the modal and are never stranded.
+  let modalEl: HTMLElement | null = null;
+  let previouslyFocused: HTMLElement | null = null;
+
+  $: if (isOpen && modalEl) {
+    if (!previouslyFocused) {
+      previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    }
+    requestAnimationFrame(() => modalEl?.focus());
+  }
+
+  $: if (!isOpen && previouslyFocused) {
+    previouslyFocused.focus();
+    previouslyFocused = null;
+  }
+
   function handleModalKeydown(event: KeyboardEvent) {
     if (!isOpen) return;
     if (event.key === 'Escape') {
@@ -35,9 +51,8 @@
     }
     // Focus trap: keep Tab/Shift+Tab cycling within the modal
     if (event.key === 'Tab') {
-      const modal = document.querySelector('[role="dialog"]');
-      if (!modal) return;
-      const focusable = modal.querySelectorAll<HTMLElement>(
+      if (!modalEl) return;
+      const focusable = modalEl.querySelectorAll<HTMLElement>(
         'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
       );
       if (focusable.length === 0) return;
@@ -56,15 +71,6 @@
       }
     }
   }
-
-  onMount(() => {
-    if (isOpen) {
-      requestAnimationFrame(() => {
-        const modal = document.querySelector('[role="dialog"]');
-        if (modal instanceof HTMLElement) modal.focus();
-      });
-    }
-  });
 </script>
 
 <svelte:window onkeydown={handleModalKeydown} />
@@ -75,6 +81,7 @@
   <div class="overlay" onclick={handleBackdropClick} transition:fade={{ duration: 120 }}>
     <div
       class="modal"
+      bind:this={modalEl}
       onclick={(e) => e.stopPropagation()}
       transition:fly={{ y: 30, duration: 180 }}
       role="dialog"
@@ -82,6 +89,7 @@
       aria-labelledby="modal-title"
       aria-describedby="modal-message"
       tabindex="-1"
+      data-confirm-modal
     >
       <div class="modal-header">
         <div class="icon-container" class:warning={type === 'warning'} class:danger={type === 'danger'}>
