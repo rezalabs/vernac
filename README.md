@@ -1,5 +1,7 @@
 # Vernac
 
+![Vernac workspace in dark mode, translating an English sentence into Japanese](docs/screenshot-dark.png)
+
 Privacy-focused, client-side AI translation. OpenAI, Anthropic Claude, or local Ollama models. No sign-in. No third-party data sharing. No backend. Vernac puts a translation workspace directly in your browser where API keys stay in localStorage, translation text goes only to the provider you choose, and every major AI provider works through a single interface.
 
 ## Features
